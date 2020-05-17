@@ -1,0 +1,442 @@
+Length of the smallest sub-string consisting of maximum distinct characters
+Given a string of length N, find the length of the smallest sub-string consisting of maximum distinct characters. Note : Our output can have same character.
+ 
+Examples:
+Input : "AABBBCBB"
+Output : 5
+
+Input : "AABBBCBBAC"
+Output : 3
+Explanation : Sub-string -> "BAC"
+
+Input : "GEEKSGEEKSFOR"
+Output : 8
+Explanation : Sub-string -> "GEEKSFOR"
+
+
+Recommended: Please solve it on “PRACTICE ” first, before moving on to the solution.
+Method 1 (Brute Force)
+We can consider all sub-strings one by one and check for each sub-string both conditions together
+1. sub-string’s distinct characters is equal to maximum distinct characters
+2. sub-sting’s length should be minimum .
+Time Complexity : O(n^3)
+
+/* C++ program to find the length of the smallest  
+substring consisting of maximum distinct characters */
+#include <bits/stdc++.h> 
+using namespace std; 
+  
+#define NO_OF_CHARS 256 
+  
+// Find maximum distinct characters in any string 
+int max_distinct_char(string str, int n){ 
+  
+    // Initialize all character's count with 0 
+    int count[NO_OF_CHARS] = {0}; 
+      
+    // Increase the count in array if a character 
+    // is found 
+    for (int i = 0; i < n;  i++) 
+        count[str[i]]++; 
+      
+    int max_distinct = 0; 
+    for (int i = 0; i < NO_OF_CHARS;  i++) 
+        if (count[i] != 0)       
+            max_distinct++;      
+      
+    return max_distinct; 
+} 
+  
+int smallesteSubstr_maxDistictChar(string str){ 
+  
+    int n = str.size();     // size of given string 
+  
+    // Find maximum distinct characters in any string 
+    int max_distinct = max_distinct_char(str, n); 
+    int minl = n;   // result 
+      
+    // Brute force approach to find all substrings 
+    for (int i=0 ;i<n ;i++){ 
+        for (int j=0; j<n; j++){ 
+            string subs =  str.substr(i,j); 
+            int subs_lenght = subs.size(); 
+            int sub_distinct_char = max_distinct_char(subs, subs_lenght);  
+              
+            // We have to check here both conditions together 
+            // 1. substring's distinct characters is equal 
+            //    to maximum distinct characters 
+            // 2. substing's length should be minimum  
+            if (subs_lenght < minl && max_distinct == sub_distinct_char){ 
+                minl = subs_lenght; 
+            } 
+        } 
+    } 
+    return minl; 
+} 
+  
+/* Driver program to test above function */
+int main() 
+{ 
+    // Input String 
+    string str = "AABBBCBB"; 
+      
+    int len =  smallesteSubstr_maxDistictChar(str); 
+    cout << " The length of the smallest substring"
+            " consisting of maximum distinct "
+            "characters : " << len; 
+    return 0; 
+} 
+
+Smallest window that contains all characters of string itself
+Given a string, find the smallest window length with all distinct characters of the given string. For eg. str = “aabcbcdbca”, then the result would be 4 as of the smallest window will be “dbca” .
+Examples:
+Input: aabcbcdbca
+Output: dbca
+Explanation: 
+Possible substrings= {aabcbcd, abcbcd, 
+bcdbca, dbca....}
+Of the set of possible substrings 'dbca' 
+is the shortest substring having all the 
+distinct characters of given string. 
+
+Input: aaab
+Output: ab
+Explanation: 
+Possible substrings={aaab, aab, ab}
+Of the set of possible substrings 'ab' 
+is the shortest substring having all 
+the distinct characters of given string.    
+Recommended: Please solve it on “PRACTICE ” first, before moving on to the solution.
+Solution: Above problem states that we have to find the smallest window that contains all the distinct characters of the given string even if the smallest string contains repeating elements.
+For example, in “aabcbcdb”, the smallest string that contains all the characters is “abcbcd”.
+
+
+Method 1: This is the Brute Force method of solving the problem using HashMap.
+•	Approach : For solving the problem we first have to find out all the distinct characters present in the string. This can be done using a HashMap. The next thing is to generate all the possible substrings. This follows by checking whether a substring generated has all the required characters(stored in the hash_map) or not. If yes, then compare its length with the minimum substring length which follows the above constraints, found till now.
+HashMap: HashMap is a part of Java’s collection since Java 1.2. It provides the basic implementation of the Map interface of Java. It stores the data in (Key, Value) pairs. To access a value one must know its key. HashMap is known as HashMap because it uses a technique called Hashing. Hashing is a technique of converting a large String to small String that represents the same String. A shorter value helps in indexing and faster searches. HashSet also uses HashMap internally. It internally uses a link list to store key-value pairs already explained in HashSet in detail and further articles.
+•	Algorithm :
+1.	Store all distinct characters of the given string in a hash_map.
+2.	Take a variable count and initialize it with value 0.
+3.	Generate the substrings using two pointers.
+4.	Now check whether generated substring is valid or not-:
+a.	As soon we find that the character of the substring generated has not been encountered before, increment count by 1.
+b.	We can use a visited array of max_chars size to find whether the current character has been encountered before or not.
+c.	If count is equal to equal to size of hash_map the substring generated is valid
+d.	If it is a valid substring, compare it with the minimum length substring already generated.
+•	Pseudo Code:
+•	maphash_map;
+•	for ( i=0 to str.length())
+•	hash_map[str[i]]++;//finding all distinct charaters of string
+•	minimum_size=INT_MAX
+•	Distinct_chars=hash_map.size()
+•	for(i=0 to str.length())
+•	count=0;
+•	sub_str="";
+•	visited[256]={0};
+•	 for(j=i to n)
+•	   sub_str+=str[j]
+•	   if(visited[str[j]]==0)
+•	   count++
+•	   visited[str[j]]=1;
+•	   if(count==Distinct_chars)
+•	   end loop
+•	
+•	if(sub_str.length()<minimum_size&&
+•	count==Distinct_chars)
+•	ans=sub_str;
+•	  
+•	return ans
+•	Implementation:
+filter_none
+edit
+play_arrow
+brightness_5
+// C++ program to find the smallest 
+// window containing all characters 
+// of a pattern. 
+#include <bits/stdc++.h> 
+using namespace std; 
+  
+const int MAX_CHARS = 256; 
+  
+// Function to find smallest window containing 
+// all distinct characters 
+string findSubString(string str) 
+{ 
+    int n = str.length(); 
+  
+    // Count all distinct characters. 
+    int dist_count = 0; 
+    unordered_map<int, int> hash_map; 
+    for (int i = 0; i < n; i++) { 
+        hash_map[str[i]]++; 
+    } 
+  
+    dist_count = hash_map.size(); 
+    int size = INT_MAX; 
+    string res; 
+    // Now follow the algorithm discussed in below 
+    for (int i = 0; i < n; i++) { 
+        int count = 0; 
+        int visited[256] = { 0 }; 
+        string sub_str = ""; 
+        for (int j = i; j < n; j++) { 
+            if (visited[str[j]] == 0) { 
+                count++; 
+                visited[str[j]] = 1; 
+            } 
+            sub_str += str[j]; 
+            if (count == dist_count) 
+                break; 
+        } 
+        if (sub_str.length() < size && count == dist_count) 
+            res = sub_str; 
+    } 
+    return res; 
+} 
+  
+// Driver Code 
+int main() 
+{ 
+    string str = "aabcbcdbca"; 
+    cout << "Smallest window containing all distinct"
+            " characters is: "
+         << findSubString(str); 
+    return 0; 
+} 
+Output:
+Smallest window containing all 
+distinct characters is: dbca
+•	Complexiy Analysis:
+•	Time Complexity: O(N^2).
+This time is required to generate all possible sub-strings of a string of length “N”.
+•	Space Complexity: O(N).
+As a hash_map has been used of size N.
+Method 2: Here we have used Sliding Window technique to arrive at the solution. This technique shows how a nested for loop in few problems can be converted to single for loop and hence reducing the time complexity.
+•	Approach: Basically a window of characters is maintained by using two pointers namely start and end. These start and end pointers can be used to shrink and increase the size of window respectively. Whenever the window contains all characters of given string, the window is shrinked from left side to remove extra characters and then its length is compared with the smallest window found so far.
+If in the present window, no more characters can be deleted then we start increasing the size of the window using the end until all the distinct characters present in the string are also there in the window. Finally, find the minimum size of each window.
+ 
+•	Algorithm :
+
+
+1.	Maintain an array (visited) of maximum possible characters (256 characters) and as soon as we find any in the string, mark that index in the array (this is to count all distinct characters in the string).
+2.	Take two pointers start and end which will mark the start and end of window.
+3.	Take a counter=0 which will be used to count distinct characters in the window.
+4.	Now start reading the characters of the given string and if we come across a character which has not been visited yet increment the counter by 1.
+5.	If the counter is equal to total number of distinct characters, Try to shrink the window.
+6.	For shrinking the window -:
+a.	If the frequency of character at start pointer is greater than 1 increment the pointer as it is redundant.
+b.	Now compare the length of present window with the minimum window length.
+•	
+•	Implementation:
+•	C++
+•	Java
+•	Python3
+•	C#
+filter_none
+edit
+play_arrow
+brightness_5
+// C++ program to find the smallest  
+// window containing all characters  
+// of a pattern. 
+#include <bits/stdc++.h> 
+using namespace std; 
+  
+const int MAX_CHARS = 256; 
+  
+// Function to find smallest window containing 
+// all distinct characters 
+string findSubString(string str) 
+{ 
+    int n = str.length(); 
+  
+    // Count all distinct characters. 
+    int dist_count = 0; 
+    bool visited[MAX_CHARS] = { false }; 
+    for (int i = 0; i < n; i++) { 
+        if (visited[str[i]] == false) { 
+            visited[str[i]] = true; 
+            dist_count++; 
+        } 
+    } 
+  
+    // Now follow the algorithm discussed in below 
+    // post. We basically maintain a window of characters 
+    // that contains all characters of given string. 
+    int start = 0, start_index = -1, min_len = INT_MAX; 
+  
+    int count = 0; 
+    int curr_count[MAX_CHARS] = { 0 }; 
+    for (int j = 0; j < n; j++) { 
+        // Count occurrence of characters of string 
+        curr_count[str[j]]++; 
+  
+        // If any distinct character matched, 
+        // then increment count 
+        if (curr_count[str[j]] == 1) 
+            count++; 
+  
+        // if all the characters are matched 
+        if (count == dist_count) { 
+            // Try to minimize the window i.e., check if 
+            // any character is occurring more no. of times 
+            // than its occurrence in pattern, if yes 
+            // then remove it from starting and also remove 
+            // the useless characters. 
+            while (curr_count[str[start]] > 1) { 
+                if (curr_count[str[start]] > 1) 
+                    curr_count[str[start]]--; 
+                start++; 
+            } 
+  
+            // Update window size 
+            int len_window = j - start + 1; 
+            if (min_len > len_window) { 
+                min_len = len_window; 
+                start_index = start; 
+            } 
+        } 
+    } 
+  
+    // Return substring starting from start_index 
+    // and length min_len 
+    return str.substr(start_index, min_len); 
+} 
+  
+// Driver code 
+int main() 
+{ 
+    string str = "aabcbcdbca"; 
+    cout << "Smallest window containing all distinct"
+            " characters is: "
+         << findSubString(str); 
+    return 0; 
+} 
+Output:
+Smallest window containing all 
+distinct characters is dbca
+•	Complexiy Analysis:
+•	Time Complexity: O(N).
+As the string is traversed using two pointers only once.
+•	Space Complexity: O(N).
+As a hash_map is used of size N.
+
+
+
+
+
+Smallest distinct window
+•	Problems
+Given a string 's'. The task is to find the smallest window length that contains all the characters of the given string at least one time.
+For eg. A = “aabcbcdbca”, then the result would be 4 as of the smallest window will be “dbca”.
+Input:
+The first line of input contains an integer T denoting the no of test cases. Then T test cases follow. Each test case contains a string S.
+
+Output:
+For each test case in a new line print the length of the smallest such string.
+
+Constraints:
+1 <= T <= 100
+1 <= |S| <= 105
+
+Example:
+Input:
+2
+aabcbcdbca
+aaab
+
+Output:
+4
+2
+Explanation:
+Testcase 1: Smallest window size is 4 which is of "dbca" which consists all characters of the string.
+ 
+Mycode:
+#include<bits/stdc++.h>
+using namespace std;
+#define all(x) (x).begin(), (x).end()
+ //Now sorting a vector looks like sort(all(vec)) 
+//instead of sort(vec.begin(), vec.end()).
+
+typedef pair<int, int> pii;
+typedef pair<double, double> pdd;
+typedef vector<double> vd;
+typedef vector<bool> vb;
+typedef vector<int> vi;
+typedef vector<vi> vvi;
+typedef vector<vvi> vvvi;
+typedef vector<string> vs;
+
+#define fori(n) for(int i=0; i<int(n); i++)
+#define cins(s) string s; cin>>s;
+#define cini(i) int i; cin>>i;
+#define cind(d) double d; cin>>d;
+#define cinai(a, n) vi a(n); fori(n) { cin>>a[i]; }
+#define cinas(s, n) vs s(n); fori(n) { cin>>s[i]; }
+#define cinad(a, n) vd a(n); fori(n) { cin>>a[i]; }
+#define watch(x) cout << (#x) << " is " << (x) << endl
+#define see(x) cout << (x) << " ";
+#define hh cout << "\n";
+typedef long long int ll;
+#define vll vector < ll > 
+#define fo(i, n) for(i=0; i<n; i++)
+#define Fo(i, k, n) for(i=k; i<n; i++)
+int32_t main(){
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    int t;
+    cin>>t;
+    while(t--){
+        int n,i,j,dis_len=0;
+        string s;
+        cin>>s;   n=s.length();
+        
+        set<char>dis;
+        
+        fo(i,n)
+        {
+            dis.insert(s[i]);
+        }
+        
+        int h1[256]={0},h2[256]={0};
+        
+        for(auto ch:dis)
+        {
+            h1[ch]+=1;
+            dis_len++;
+        }
+        
+        int count=0,start=0,ans=n,f=0;
+        
+        fo(i,n)
+        {
+            char ch=s[i];
+            
+            h2[ch]+=1;
+            
+            if(h2[ch]==1)
+            {
+                count+=1;
+            }
+            
+            if(count==dis_len)
+            {
+                f++;
+                while(h2[s[start]]>1)
+                {
+                    h2[s[start]]-=1;
+                    start++;
+                }
+                
+                ans=min(ans,i-start+1);
+            }
+        }
+        
+        see(ans)
+        hh
+        
+      
+        }
+}
