@@ -1,0 +1,258 @@
+Find the smallest window in a string containing all characters of another string
+Given two strings string1 and string2, the task is to find the smallest substring in string1 containing all characters of string2 efficiently.
+Examples:
+Input: string = “this is a test string”, pattern = “tist”
+Output: Minimum window is “t stri”
+Explanation: “t stri” contains all the characters of pattern.
+
+
+Input: string = “geeksforgeeks”, pattern = “ork”
+Output: Minimum window is “ksfor”
+Method 1 ( Brute force solution )
+1- Generate all substrings of string1 (“this is a test string”)
+2- For each substring, check whether the substring contains all characters of string2 (“tist”)
+3- Finally, print the smallest substring containing all characters of string2.
+ 
+Method 2 ( Efficient Solution )
+1.	First check if the length of string is less than the length of the given pattern, if yes then “no such window can exist “.
+2.	Store the occurrence of characters of the given pattern in a hash_pat[].
+3.	Start matching the characters of pattern with the characters of string i.e. increment count if a character matches.
+4.	Check if (count == length of pattern ) this means a window is found.
+5.	If such window found, try to minimize it by removing extra characters from the beginning of the current window.
+6.	Update min_length.
+7.	Print the minimum length window.
+Diagram to explain the above algorithm:
+ 
+Below is the program to implement the above algorithm:
+
+
+
+Tip: Observe that we taverse array once and it is O(2*n)=O(n)
+       Solution.
+      Now do reverse engineering or reverse analysis
+O(2*n)=> 2 pointer approach and sliding window combination
+
+  We maintain hash tables for s1(str)  and s2(pattern) ie has_str[]
+ and  has_ptr[] and we make has_ptr and fixed it a bench mark 
+ to move sliding window which can be noticed in following program
+ Notice that variable count is monotonic non-decreasing 
+ 
+ 
+// C++ program to find smallest window containing 
+// all characters of a pattern. 
+#include<bits/stdc++.h> 
+using namespace std; 
+
+const int no_of_chars = 256; 
+
+// Function to find smallest window containing 
+// all characters of 'pat' 
+string findSubString(string str, string pat) 
+{ 
+	int len1 = str.length(); 
+	int len2 = pat.length(); 
+
+	// check if string's length is less than pattern's 
+	// length. If yes then no such window can exist 
+	if (len1 < len2) 
+	{ 
+		cout << "No such window exists"; 
+		return ""; 
+	} 
+
+	int hash_pat[no_of_chars] = {0}; 
+	int hash_str[no_of_chars] = {0}; 
+
+	// store occurrence ofs characters of pattern 
+	for (int i = 0; i < len2; i++) 
+		hash_pat[pat[i]]++; 
+
+   cout<<"a: "<<hash_pat['a']<<"\n";
+  cout<<"b: "<<hash_pat['b']<<"\n";
+  cout<<"c: "<<hash_pat['c']<<"\n";
+  cout<<"d: "<<hash_pat['d']<<"\n";
+  
+	int start = 0, start_index = -1, min_len = INT_MAX; 
+
+	// start traversing the string 
+	int count = 0; // count of characters 
+	for (int j = 0; j < len1 ; j++) 
+	{ 
+		// count occurrence of characters of string 
+		hash_str[str[j]]++; 
+
+		// If string's char matches with pattern's char 
+		// then increment count 
+		if (hash_pat[str[j]] != 0 && 
+			hash_str[str[j]] <= hash_pat[str[j]] ) 
+			count++; 
+
+      cout<<"count len2: "<<count<<" "<<len2<<"\n";
+      
+		// if all the characters are matched 
+		if (count == len2) 
+		{ 
+			// Try to minimize the window i.e., check if 
+			// any character is occurring more no. of times 
+			// than its occurrence in pattern, if yes 
+			// then remove it from starting and also remove 
+			// the useless characters. 
+			while ( hash_str[str[start]] > hash_pat[str[start]] 
+				|| hash_pat[str[start]] == 0) 
+			{ 
+	
+              // cout<<"a: "<<hash_str['a']<<"\n";
+              //  cout<<"b: "<<hash_str['b']<<"\n";
+              //  cout<<"c: "<<hash_str['c']<<"\n";
+              //  cout<<"d: "<<hash_str['d']<<"\n";
+              
+				if (hash_str[str[start]] > hash_pat[str[start]]) 
+					hash_str[str[start]]--; 
+				start++; 
+			} 
+
+			// update window size 
+			int len_window = j - start + 1; 
+			if (min_len > len_window) 
+			{ 
+				min_len = len_window; 
+				start_index = start; 
+              
+                cout<<"@: "<<str.substr(start_index, min_len)<<"\n"; 
+			} 
+		} 
+	} 
+
+	// If no window found 
+	if (start_index == -1) 
+	{ 
+	cout << "No such window exists"; 
+	return ""; 
+	} 
+
+	// Return substring starting from start_index 
+	// and length min_len 
+	return str.substr(start_index, min_len); 
+} 
+
+// Driver code 
+int main() 
+{ 
+	string str = "xaaaaxxxayyyybxxxxcyyyyydxxcba"; 
+	string pat = "abcd"; 
+
+	cout << "Smallest window is : \n"
+		<< findSubString(str, pat); 
+	return 0; 
+}
+
+Output:
+Smallest window is : 
+dxxcba
+
+Analysis
+a: 1
+b: 1
+c: 1
+d: 1
+count len2: 0 4
+count len2: 1 4
+count len2: 1 4
+count len2: 1 4
+count len2: 1 4
+count len2: 1 4
+count len2: 1 4
+count len2: 1 4
+count len2: 1 4
+count len2: 1 4
+count len2: 1 4
+count len2: 1 4
+count len2: 1 4
+count len2: 2 4
+count len2: 2 4
+count len2: 2 4
+count len2: 2 4
+count len2: 2 4
+count len2: 3 4
+count len2: 3 4
+count len2: 3 4
+count len2: 3 4
+count len2: 3 4
+count len2: 3 4
+count len2: 4 4
+@: ayyyybxxxxcyyyyyd
+count len2: 4 4
+count len2: 4 4
+count len2: 4 4
+count len2: 4 4
+count len2: 4 4
+@: dxxcba
+Smallest window is : 
+dxxcba
+Tip: observe the if condition if(count==len2)
+Until we got all characters of str2 in str1 we are simply traversing but when we get all character once we start looking for best possible smallest string and start removing useless character or if character is useful and more in no. then to check for best smallest string.
+a: 1
+b: 1
+c: 1
+d: 1
+count len2: 0 4
+count len2: 1 4
+count len2: 1 4
+count len2: 1 4
+count len2: 1 4
+count len2: 1 4
+count len2: 1 4
+count len2: 1 4
+count len2: 1 4
+count len2: 1 4
+count len2: 1 4
+count len2: 1 4
+count len2: 1 4
+count len2: 2 4
+count len2: 2 4
+count len2: 2 4
+count len2: 2 4
+count len2: 2 4
+count len2: 3 4
+count len2: 3 4
+count len2: 3 4
+count len2: 3 4
+count len2: 3 4
+count len2: 3 4
+count len2: 4 4
+inside: while
+inside: while
+inside: while
+inside: while
+inside: while
+inside: while
+inside: while
+inside: while
+@: ayyyybxxxxcyyyyyd
+count len2: 4 4
+count len2: 4 4
+count len2: 4 4
+count len2: 4 4
+count len2: 4 4
+inside: while
+inside: while
+inside: while
+inside: while
+inside: while
+inside: while
+inside: while
+inside: while
+inside: while
+inside: while
+inside: while
+inside: while
+inside: while
+inside: while
+inside: while
+inside: while
+@: dxxcba
+Smallest window is : 
+dxxcba
+
+
+
